@@ -103,8 +103,14 @@ curl http://localhost:8000/api/addresses/1/risks/
 # Lancer tous les tests
 docker compose exec web python manage.py test
 
-# Lancer un test spécifique
-docker compose exec web python manage.py test addresses.tests.AdresseAPITests
+# Test création avec requête vide
+docker compose exec web python manage.py test addresses.tests.AddressAPITests.test_empty_query_returns_400
+
+# Test adresse introuvable
+docker compose exec web python manage.py test addresses.tests.AddressAPITests.test_address_not_found_returns_404
+
+# Test risques sur adresse inexistante
+docker compose exec web python manage.py test addresses.tests.AddressAPITests.test_get_risks_nonexistent_address_returns_404
 ```
 
 ### Tests manuels
