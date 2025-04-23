@@ -1,80 +1,80 @@
 
-# API Address Risk
+# API Address Risk - Documentation
 
-API Dockerisée pour la gestion d'adresses et l'analyse des risques associés
+![Django](https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 
-## 🚀 Instructions de lancement
+API Dockerisée pour la gestion d'adresses et l'analyse des risques associés.
 
-### Prérequis
+## 📋 Table des matières
+- [Prérequis](#-prérequis)
+- [Installation](#-installation)
+- [Lancement](#-lancement)
+- [Endpoints](#-endpoints)
+- [Tests](#-tests)
+- [Structure](#-structure)
+- [Dépannage](#-dépannage)
+
+## 🛠 Prérequis
+
 - Docker 20.10+
-- Docker Compose 2.0+
+- Docker Compose 2.2+
+- Git 2.30+
 
-### Installation
 ```bash
-git clone [URL_DU_DEPOT]
-cd address-risk-api
-cp .env.example .env  # Configurer les variables si nécessaire
+# Vérification des versions
+docker --version
+docker-compose --version
+git --version
 ```
 
-### Lancer l'application
+## 🚀 Installation
+
+### Cloner le dépôt :
+```bash
+git clone https://github.com/votre-repo/address-risk-api.git
+cd address-risk-api
+```
+
+### Configurer l'environnement :
+```bash
+cp .env.example .env
+nano .env  # Éditer avec vos valeurs
+```
+
+### Construire l'image :
 ```bash
 docker compose build
+```
+
+## 🏃 Lancement
+```bash
+# Démarrer les services
 docker compose up
-```
-L'API sera disponible sur http://localhost:8000
 
-## 🔧 Variables d'environnement
+# Lancer en arrière-plan
+docker compose up -d
 
-Fichier `.env` à créer :
-```ini
-# Configuration de base
-DEBUG=True
-SECRET_KEY=votre_clé_secrète
-
-# Base de données
-DATABASE_URL=sqlite:////app/data/db.sqlite3
-
-# Timeouts API externes (en secondes)
-BAN_API_TIMEOUT=5
-GEORISQUES_API_TIMEOUT=5
+# Arrêter les services
+docker compose down
 ```
 
-## 🌐 Architecture de l'application
+L'API sera disponible sur : http://localhost:8000
 
-```
-.
-├── Dockerfile                # Configuration Docker
-├── docker-compose.yml        # Orchestration
-├── requirements.txt          # Dépendances Python
-├── addresses/                # Application principale
-│   ├── models.py             # Modèle Address
-│   ├── serializers.py        # Sérialisation des données
-│   ├── views.py              # Logique des endpoints
-│   ├── urls.py               # Routes API
-│   └── tests.py              # Tests unitaires
-├── config/                   # Configuration Django
-│   ├── settings.py           # Paramètres
-│   └── urls.py               # Routes principales
-└── data/                     # Volume de données
-    └── db.sqlite3            # Base SQLite
-```
-
-## 📡 Endpoints API
+## 🌐 Endpoints
 
 ### POST /api/addresses/
 
-Enregistre une nouvelle adresse via l'API BAN
+Enregistre une nouvelle adresse
 
-**Requête** :
-```json
-{
-  "q": "8 bd du Port"
-}
+**Requête :**
+```bash
+curl -X POST http://localhost:8000/api/addresses/ \
+  -H "Content-Type: application/json" \
+  -d '{"q": "8 bd du Port"}'
 ```
 
-**Réponses** :
-
-- **200 Succès** :
+**Réponse :**
 ```json
 {
   "id": 1,
@@ -88,63 +88,63 @@ Enregistre une nouvelle adresse via l'API BAN
 }
 ```
 
-- **400 Requête invalide** :
-```json
-{
-  "error": "Le champ 'q' est requis et doit être une chaîne non vide."
-}
-```
-
 ### GET /api/addresses/<id>/risks/
 
-Récupère les risques associés à une adresse
+Récupère les risques associés
 
-**Réponses** :
-
-- **200 Succès** :
-```json
-{
-  "risks": [
-    {
-      "type": "inondation",
-      "level": "moyen"
-    }
-  ]
-}
-```
-
-- **404 Adresse introuvable** :
-```json
-{
-  "error": "Adresse non trouvée."
-}
+**Requête :**
+```bash
+curl http://localhost:8000/api/addresses/1/risks/
 ```
 
 ## 🧪 Tests
 
-### Lancer tous les tests
+### Tests unitaires
 ```bash
+# Lancer tous les tests
 docker compose exec web python manage.py test
+
+# Lancer un test spécifique
+docker compose exec web python manage.py test addresses.tests.AdresseAPITests
 ```
 
-### Tests disponibles
+### Tests manuels
 ```bash
-# Test création d'adresse
-docker compose exec web python manage.py test addresses.tests.AddressAPITests
+# Test création valide
+curl -X POST http://localhost:8000/api/addresses/ -d '{"q": "test"}'
 
-# Test récupération de risques
-docker compose exec web python manage.py test addresses.tests.AddressRiskViewTest
+# Test erreur
+curl -X POST http://localhost:8000/api/addresses/ -d '{"q": ""}'
 ```
 
-## 🛠 Dépendances techniques
+## 📂 Structure du projet
 
-- **Backend** :
-  - Django 5.0
-  - Django REST Framework 3.14
-  - Requests 2.31
+```
+.
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+├── addresses/
+│   ├── models.py
+│   ├── views.py
+│   └── tests.py
+├── config/
+│   └── settings.py
+└── data/
+    └── db.sqlite3
+```
 
-- **Infrastructure** :
-  - Docker
-  - SQLite
+## 🆘 Dépannage
 
-📄 *Documentation mise à jour le 23/04/2025*
+**Problème : Erreurs de dépendances**  
+**Solution :**
+```bash
+docker compose down
+docker compose build --no-cache
+```
+
+**Problème : Variables d'environnement non chargées**  
+**Vérifier :**
+```bash
+docker compose exec web env | grep DEBUG
+```
