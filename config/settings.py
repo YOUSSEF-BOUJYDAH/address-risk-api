@@ -1,11 +1,14 @@
-from pathlib import Path
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
+# Charger les variables avant la configuration
 BASE_DIR = Path(__file__).resolve().parent.parent
+load_dotenv(BASE_DIR / '.env')
 
-SECRET_KEY = 'django-insecure-default-key-for-test'
-
-DEBUG = False
+# Remplacer les configurations existantes
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-fallback-key')
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = ['*']
 
@@ -53,7 +56,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/app/data/db.sqlite3',
+        'NAME': os.getenv('DATABASE_URL').split('///')[-1],
     }
 }
 

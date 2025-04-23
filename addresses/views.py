@@ -5,9 +5,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Address
-
+import os
+from django.conf import settings
 logger = logging.getLogger(__name__)
-
 class AddressView(APIView):
 
     def post(self, request):
@@ -24,7 +24,8 @@ class AddressView(APIView):
             ban_response = requests.get(
                 "https://api-adresse.data.gouv.fr/search/",
                 params={'q': q, 'limit': 1},
-                timeout=5
+                timeout=int(os.getenv('BAN_API_TIMEOUT', 5))
+
             )
             ban_response.raise_for_status()
             ban_data = ban_response.json()
@@ -95,7 +96,8 @@ class AddressRiskView(APIView):
             response = requests.get(
                 "https://www.georisques.gouv.fr/api/v3/v1/resultats_rapport_risque",
                 params={'latlon': f"{address.longitude},{address.latitude}"},
-                timeout=5
+                timeout=int(os.getenv('GEORISQUES_API_TIMEOUT', 5))
+
             )
             response.raise_for_status()
             return Response(response.json(), status=status.HTTP_200_OK)
