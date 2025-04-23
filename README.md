@@ -12,7 +12,6 @@ API Dockerisée pour la gestion d'adresses et l'analyse des risques associés.
 - [Lancement](#-lancement)
 - [Endpoints](#-endpoints)
 - [Tests](#-tests)
-- [Structure](#-structure)
 - [Dépannage](#-dépannage)
 
 ## 🛠 Prérequis
@@ -32,7 +31,7 @@ git --version
 
 ### Cloner le dépôt :
 ```bash
-git clone https://github.com/votre-repo/address-risk-api.git
+git clone https://github.com/YOUSSEF-BOUJYDAH/address-risk-api.git
 cd address-risk-api
 ```
 
@@ -117,22 +116,7 @@ curl -X POST http://localhost:8000/api/addresses/ -d '{"q": "test"}'
 curl -X POST http://localhost:8000/api/addresses/ -d '{"q": ""}'
 ```
 
-## 📂 Structure du projet
 
-```
-.
-├── Dockerfile
-├── docker-compose.yml
-├── .env.example
-├── addresses/
-│   ├── models.py
-│   ├── views.py
-│   └── tests.py
-├── config/
-│   └── settings.py
-└── data/
-    └── db.sqlite3
-```
 
 ## 🆘 Dépannage
 
